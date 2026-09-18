@@ -1,0 +1,18 @@
+.panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 180px;
+}
+
+.panel__title {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.panel__placeholder {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 14px;
+}
