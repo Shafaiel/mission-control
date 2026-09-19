@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import './TaskForm.css'
 
+const UNASSIGNED = 'Unassigned'
+
 function TaskForm({ agents, onAdd }) {
   const [title, setTitle] = useState('')
-  const [agent, setAgent] = useState(agents[0])
+  const [agent, setAgent] = useState(UNASSIGNED)
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -26,7 +28,7 @@ function TaskForm({ agents, onAdd }) {
         value={agent}
         onChange={(e) => setAgent(e.target.value)}
       >
-        {agents.map((name) => (
+        {[UNASSIGNED, ...agents].map((name) => (
           <option key={name} value={name}>
             {name}
           </option>

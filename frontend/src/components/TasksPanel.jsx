@@ -2,15 +2,16 @@ import { useState } from 'react'
 import TaskTable from './TaskTable'
 import TaskForm from './TaskForm'
 import LoadState from './LoadState'
-import { getAgents, getTasks, createTask } from '../api'
+import { getAgents, getTasks, createTask, updateTaskStatus, deleteTask } from '../api'
 import { useLoad } from '../hooks/useLoad'
 import './TasksPanel.css'
 
-function TasksPanel() {
-  const tasksLoad = useLoad(getTasks)
+// refreshKey changes when something else (the chat agent) has changed the tasks.
+function TasksPanel({ refreshKey }) {
+  const tasksLoad = useLoad(getTasks, refreshKey)
   const agentsLoad = useLoad(getAgents)
   const [showDone, setShowDone] = useState(true)
-  const [saveError, setSaveError] = useState('')
+  const [actionError, setActionError] = useState('')
 
   const loading = tasksLoad.loading || agentsLoad.loading
   const error = tasksLoad.error || agentsLoad.error
@@ -21,12 +22,32 @@ function TasksPanel() {
   }
 
   async function addTask(input) {
-    setSaveError('')
+    setActionError('')
     try {
       const created = await createTask(input)
       tasksLoad.setData((current) => [...current, created])
     } catch (err) {
-      setSaveError(err.message || 'Could not save the task')
+      setActionError(err.message || 'Could not save the task')
+    }
+  }
+
+  async function changeStatus(id, status) {
+    setActionError('')
+    try {
+      const updated = await updateTaskStatus(id, status)
+      tasksLoad.setData((current) => current.map((t) => (t.id === id ? updated : t)))
+    } catch (err) {
+      setActionError(err.message || 'Could not update the task')
+    }
+  }
+
+  async function removeTask(id) {
+    setActionError('')
+    try {
+      await deleteTask(id)
+      tasksLoad.setData((current) => current.filter((t) => t.id !== id))
+    } catch (err) {
+      setActionError(err.message || 'Could not delete the task')
     }
   }
 
@@ -51,8 +72,8 @@ function TasksPanel() {
       {ready && (
         <>
           <TaskForm agents={agentsLoad.data} onAdd={addTask} />
-          {saveError && <p className="panel__status panel__status--error">{saveError}</p>}
-          <TaskTable tasks={visibleTasks} />
+          {actionError && <p className="panel__status panel__status--error">{actionError}</p>}
+          <TaskTable tasks={visibleTasks} onStatusChange={changeStatus} onDelete={removeTask} />
         </>
       )}
     </section>
