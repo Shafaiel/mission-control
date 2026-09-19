@@ -1,10 +1,15 @@
 const BASE_URL = import.meta.env?.VITE_API_URL ?? 'http://localhost:3001'
 
 async function request(path, options) {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  })
+  let response
+  try {
+    response = await fetch(`${BASE_URL}${path}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    })
+  } catch {
+    throw new Error(`Cannot reach the server at ${BASE_URL}. Is the backend running? (npm run dev)`)
+  }
 
   if (!response.ok) {
     let message = `Request failed (${response.status})`
@@ -26,3 +31,6 @@ export const getMessages = () => request('/api/messages')
 
 export const createTask = ({ title, agent }) =>
   request('/api/tasks', { method: 'POST', body: JSON.stringify({ title, agent }) })
+
+export const createMessage = ({ text }) =>
+  request('/api/messages', { method: 'POST', body: JSON.stringify({ text }) })
