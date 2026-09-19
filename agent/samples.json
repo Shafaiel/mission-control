@@ -1,0 +1,12 @@
+[
+  { "text": "Fix crash when the login button is clicked twice", "expected": "Bug" },
+  { "text": "Add a dark mode toggle to the dashboard", "expected": "Feature" },
+  { "text": "Update the README with setup instructions", "expected": "Documentation" },
+  { "text": "Compare three vector databases for agent memory", "expected": "Research" },
+  { "text": "Upgrade dependencies and remove unused code", "expected": "Maintenance" },
+  { "text": "Order pizza for the team lunch", "expected": "Other" },
+  { "text": "Investigate why the API is slow", "expected": "Research" },
+  { "text": "The docs page shows an error when it loads", "expected": "Bug" },
+  { "text": "Refactor the task table so it can be filtered by agent", "expected": "Feature" },
+  { "text": "asdf", "expected": "Other" }
+]
