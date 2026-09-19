@@ -1,28 +1,22 @@
 import { Router } from 'express'
-import { readDb, writeDb, nextId } from '../storage.js'
+import { listTasks, createTask, setTaskStatus, deleteTask } from '../taskService.js'
 
 const router = Router()
 
-router.get('/', (req, res) => {
-  res.json(readDb().tasks)
+router.get('/', async (req, res) => {
+  res.json(await listTasks())
 })
 
-router.post('/', (req, res) => {
-  const { title, agent } = req.body ?? {}
-  if (typeof title !== 'string' || !title.trim()) {
-    return res.status(400).json({ error: 'title is required' })
-  }
+router.post('/', async (req, res) => {
+  res.status(201).json(await createTask(req.body ?? {}))
+})
 
-  const db = readDb()
-  const task = {
-    id: nextId(db.tasks),
-    title: title.trim(),
-    agent: agent || db.agents[0],
-    status: 'Todo',
-  }
-  db.tasks.push(task)
-  writeDb(db)
-  res.status(201).json(task)
+router.patch('/:id', async (req, res) => {
+  res.json(await setTaskStatus(req.params.id, req.body?.status))
+})
+
+router.delete('/:id', async (req, res) => {
+  res.json(await deleteTask(req.params.id))
 })
 
 export default router

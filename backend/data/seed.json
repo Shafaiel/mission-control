@@ -1,14 +1,16 @@
 {
   "agents": ["Scribe", "Sorter", "Scout"],
   "tasks": [
-    { "id": 1, "title": "Summarize weekly support tickets", "agent": "Scribe", "status": "Done" },
-    { "id": 2, "title": "Categorize incoming feedback", "agent": "Sorter", "status": "In Progress" },
-    { "id": 3, "title": "Draft release notes", "agent": "Scribe", "status": "Todo" },
-    { "id": 4, "title": "Check broken links on website", "agent": "Scout", "status": "Todo" }
+    { "id": 1, "title": "Summarize weekly support tickets", "agent": "Scribe", "status": "Done", "category": "Other" },
+    { "id": 2, "title": "Categorize incoming feedback", "agent": "Sorter", "status": "In Progress", "category": "Other" },
+    { "id": 3, "title": "Draft release notes", "agent": "Scribe", "status": "Todo", "category": "Documentation" },
+    { "id": 4, "title": "Check broken links on website", "agent": "Scout", "status": "Todo", "category": "Maintenance" }
   ],
   "messages": [
-    { "id": 1, "sender": "You", "text": "Hi Scribe, can you summarize the tickets from this week?" },
-    { "id": 2, "sender": "Scribe", "text": "Sure. I found 12 tickets. Most are about login issues." },
-    { "id": 3, "sender": "You", "text": "Great, please add a task to draft the release notes." }
+    {
+      "id": 1,
+      "sender": "Agent",
+      "text": "Hi! I can add tasks, list them and update their status. Try: \"Add a task to fix the login bug\"."
+    }
   ]
 }
