@@ -1,24 +1,43 @@
-import { useState } from 'react'
-import { getMessages, createMessage } from '../api'
+import { useEffect, useRef, useState } from 'react'
+import { getMessages, sendChat } from '../api'
 import { useLoad } from '../hooks/useLoad'
 import LoadState from './LoadState'
 import './ChatPanel.css'
 
-function ChatPanel() {
+// onTasksChanged is called when the agent has created or updated tasks.
+function ChatPanel({ onTasksChanged }) {
   const { data: messages, setData: setMessages, loading, error, retry } = useLoad(getMessages)
   const [draft, setDraft] = useState('')
+  const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState('')
+  const endRef = useRef(null)
+
+  // Keep the newest message in view.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: 'end' })
+  }, [messages, sending])
 
   async function handleSend(event) {
     event.preventDefault()
-    if (!draft.trim()) return
+    const text = draft.trim()
+    if (!text || sending) return
+
     setSendError('')
+    setSending(true)
+    setDraft('')
+    // Show the user's message right away while the agent works.
+    setMessages((current) => [...current, { id: 'pending', sender: 'You', text }])
+
     try {
-      const created = await createMessage({ text: draft })
-      setMessages((current) => [...current, created])
-      setDraft('')
+      const result = await sendChat(text)
+      setMessages((current) => [...current.filter((m) => m.id !== 'pending'), ...result.messages])
+      if (result.tasksChanged) onTasksChanged?.()
     } catch (err) {
+      setMessages((current) => current.filter((m) => m.id !== 'pending'))
+      setDraft(text)
       setSendError(err.message || 'Could not send the message')
+    } finally {
+      setSending(false)
     }
   }
 
@@ -39,18 +58,26 @@ function ChatPanel() {
                 <span>{message.text}</span>
               </li>
             ))}
+            {sending && (
+              <li className="chat-panel__message chat-panel__message--thinking">
+                <strong>Agent</strong>
+                <span>Thinking...</span>
+              </li>
+            )}
+            <li ref={endRef} aria-hidden="true" />
           </ul>
 
           <form className="chat-panel__form" onSubmit={handleSend}>
             <input
               className="chat-panel__input"
               type="text"
-              placeholder="Type a message"
+              placeholder='Try: "Add a task to fix the login bug"'
               value={draft}
+              disabled={sending}
               onChange={(e) => setDraft(e.target.value)}
             />
-            <button className="chat-panel__send" type="submit">
-              Send
+            <button className="chat-panel__send" type="submit" disabled={sending}>
+              {sending ? '...' : 'Send'}
             </button>
           </form>
           {sendError && <p className="panel__status panel__status--error">{sendError}</p>}

@@ -24,6 +24,8 @@ const subtitles = {
 
 function App() {
   const [view, setView] = useState('dashboard')
+  // Bumped when the chat agent changes tasks, so the task list reloads.
+  const [tasksVersion, setTasksVersion] = useState(0)
   const current = navItems.find((item) => item.id === view)
 
   return (
@@ -33,8 +35,10 @@ function App() {
         <Header title={current.label} subtitle={subtitles[view]} />
         <PageContainer>
           {(view === 'dashboard' || view === 'agents') && <AgentsPanel />}
-          {(view === 'dashboard' || view === 'chat') && <ChatPanel />}
-          {(view === 'dashboard' || view === 'tasks') && <TasksPanel />}
+          {(view === 'dashboard' || view === 'chat') && (
+            <ChatPanel onTasksChanged={() => setTasksVersion((v) => v + 1)} />
+          )}
+          {(view === 'dashboard' || view === 'tasks') && <TasksPanel refreshKey={tasksVersion} />}
         </PageContainer>
       </div>
     </div>
