@@ -1,0 +1,22 @@
+.tasks-panel {
+  grid-column: 1 / -1;
+}
+
+.tasks-panel__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tasks-panel__toggle {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tasks-panel__toggle:hover {
+  background: #f3f4f6;
+}
