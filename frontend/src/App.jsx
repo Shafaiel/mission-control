@@ -4,7 +4,6 @@ import PageContainer from './components/PageContainer'
 import Panel from './components/Panel'
 import ChatPanel from './components/ChatPanel'
 import TasksPanel from './components/TasksPanel'
-import { mockTasks, mockAgents, mockMessages } from './data/mockData'
 import './App.css'
 
 const navItems = [
@@ -21,8 +20,8 @@ function App() {
         <Header title="Dashboard" subtitle="Manage your agents, chats and tasks" />
         <PageContainer>
           <Panel title="Agents" description="Agent list and status will appear here." />
-          <ChatPanel messages={mockMessages} />
-          <TasksPanel initialTasks={mockTasks} agents={mockAgents} />
+          <ChatPanel />
+          <TasksPanel />
         </PageContainer>
       </div>
     </div>
