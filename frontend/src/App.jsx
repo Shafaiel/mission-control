@@ -2,6 +2,9 @@ import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import PageContainer from './components/PageContainer'
 import Panel from './components/Panel'
+import ChatPanel from './components/ChatPanel'
+import TasksPanel from './components/TasksPanel'
+import { mockTasks, mockAgents, mockMessages } from './data/mockData'
 import './App.css'
 
 const navItems = [
@@ -18,8 +21,8 @@ function App() {
         <Header title="Dashboard" subtitle="Manage your agents, chats and tasks" />
         <PageContainer>
           <Panel title="Agents" description="Agent list and status will appear here." />
-          <Panel title="Chat" description="Chat space will appear here." />
-          <Panel title="Tasks" description="Task list will appear here." />
+          <ChatPanel messages={mockMessages} />
+          <TasksPanel initialTasks={mockTasks} agents={mockAgents} />
         </PageContainer>
       </div>
     </div>
