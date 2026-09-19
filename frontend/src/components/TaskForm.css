@@ -1,0 +1,32 @@
+.task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.task-form__input,
+.task-form__select {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.task-form__input {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-form__button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.task-form__button:hover {
+  background: #1f2937;
+}
