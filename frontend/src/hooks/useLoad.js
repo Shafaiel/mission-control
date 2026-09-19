@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
 // Runs an async loader (must be a stable function) and tracks data, loading and error.
-export function useLoad(loader) {
+// Changing `refreshKey` reloads the data in the background without showing the loading state.
+export function useLoad(loader, refreshKey = 0) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -25,7 +26,7 @@ export function useLoad(loader) {
     return () => {
       cancelled = true
     }
-  }, [loader, reloadKey])
+  }, [loader, reloadKey, refreshKey])
 
   function retry() {
     setLoading(true)
