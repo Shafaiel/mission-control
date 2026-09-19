@@ -1,58 +1,41 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import TaskTable from './TaskTable'
 import TaskForm from './TaskForm'
+import LoadState from './LoadState'
 import { getAgents, getTasks, createTask } from '../api'
+import { useLoad } from '../hooks/useLoad'
 import './TasksPanel.css'
 
 function TasksPanel() {
-  const [tasks, setTasks] = useState([])
-  const [agents, setAgents] = useState([])
+  const tasksLoad = useLoad(getTasks)
+  const agentsLoad = useLoad(getAgents)
   const [showDone, setShowDone] = useState(true)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [saveError, setSaveError] = useState('')
 
-  const [reloadKey, setReloadKey] = useState(0)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function load() {
-      try {
-        const [loadedTasks, loadedAgents] = await Promise.all([getTasks(), getAgents()])
-        if (cancelled) return
-        setTasks(loadedTasks)
-        setAgents(loadedAgents)
-      } catch (err) {
-        if (!cancelled) setError(err.message || 'Could not load tasks')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    load()
-    return () => {
-      cancelled = true
-    }
-  }, [reloadKey])
+  const loading = tasksLoad.loading || agentsLoad.loading
+  const error = tasksLoad.error || agentsLoad.error
 
   function retry() {
-    setLoading(true)
-    setError('')
-    setReloadKey((key) => key + 1)
+    if (tasksLoad.error) tasksLoad.retry()
+    if (agentsLoad.error) agentsLoad.retry()
   }
 
   async function addTask(input) {
     setSaveError('')
     try {
       const created = await createTask(input)
-      setTasks((current) => [...current, created])
+      tasksLoad.setData((current) => [...current, created])
     } catch (err) {
       setSaveError(err.message || 'Could not save the task')
     }
   }
 
-  const visibleTasks = showDone ? tasks : tasks.filter((t) => t.status !== 'Done')
+  const ready = tasksLoad.data && agentsLoad.data
+  const visibleTasks = ready
+    ? showDone
+      ? tasksLoad.data
+      : tasksLoad.data.filter((t) => t.status !== 'Done')
+    : []
 
   return (
     <section className="panel tasks-panel">
@@ -63,20 +46,11 @@ function TasksPanel() {
         </button>
       </div>
 
-      {loading && <p className="panel__status">Loading tasks...</p>}
+      <LoadState loading={loading} error={error} what="tasks" onRetry={retry} />
 
-      {error && (
-        <p className="panel__status panel__status--error">
-          Could not load tasks: {error}
-          <button className="panel__retry" onClick={retry}>
-            Retry
-          </button>
-        </p>
-      )}
-
-      {!loading && !error && (
+      {ready && (
         <>
-          <TaskForm agents={agents} onAdd={addTask} />
+          <TaskForm agents={agentsLoad.data} onAdd={addTask} />
           {saveError && <p className="panel__status panel__status--error">{saveError}</p>}
           <TaskTable tasks={visibleTasks} />
         </>

@@ -24,6 +24,31 @@
   color: #6b7280;
 }
 
+.chat-panel__form {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.chat-panel__input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.chat-panel__send {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .chat-panel__message--me {
   align-self: flex-end;
   background: #dbeafe;
